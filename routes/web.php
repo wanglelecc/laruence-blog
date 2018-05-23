@@ -11,14 +11,13 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', 'WelcomeController@index')->name('index');
+Route::get('php-internal', 'WelcomeController@phpInternal')->name('phpInternal');
+Route::get('php', 'WelcomeController@php')->name('php');
+Route::get('jscss', 'WelcomeController@jscss')->name('jscss');
+Route::get('notes', 'WelcomeController@notes')->name('notes');
+Route::get('licence', 'WelcomeController@licence')->name('licence');
 
-Route::get('lists', function () {
-    return view('lists');
-});
+Route::get('lists', 'WelcomeController@lists');
+Route::get('show', 'WelcomeController@show');
 
-Route::get('show', function () {
-    return view('show');
-});

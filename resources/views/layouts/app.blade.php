@@ -8,8 +8,7 @@
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>风雪之隅</title>
-
+    <title>@yield('title', '风雪之隅') - 风雪之隅</title>
     <!-- Styles -->
     <link href="{{ asset('css/app.css') }}" rel="stylesheet">
 </head>
@@ -36,12 +35,12 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="">首页</a></li>
-                        <li><a href="">PHP源码分析</a></li>
-                        <li><a href="">PHP应用</a></li>
-                        <li><a href="">JS/CSS</a></li>
-                        <li><a href="">随笔</a></li>
-                        <li><a href="">博客声明</a></li>
+                        <li class="active"><a href="{{route('index')}}">首页</a></li>
+                        <li><a href="{{route('phpInternal')}}">PHP源码分析</a></li>
+                        <li><a href="{{route('php')}}">PHP应用</a></li>
+                        <li><a href="{{route('jscss')}}">JS/CSS</a></li>
+                        <li><a href="{{route('notes')}}">随笔</a></li>
+                        <li><a href="{{route('licence')}}">博客声明</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                 </div>
