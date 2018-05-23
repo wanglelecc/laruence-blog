@@ -15,7 +15,7 @@
                             </div>
                             <hr />
 
-                            <div class="bs-callout bs-callout-warning">
+                            <div class="bs-callout bs-callout-warning text-normal">
                                 <ul>
                                     <li>作者：<strong>Laruence</strong></li>
                                     <li>原文地址： <a href="http://www.laruence.com/2016/07/19/3101.html">http://www.laruence.com/2016/07/19/3101.html</a></li>
@@ -23,7 +23,7 @@
                                 </ul>
                             </div>
 
-                            <div class="content">
+                            <div class="content text-normal">
 
                                 <p>
                                     好久没写文章了， 博客都长草了， 早上起来本来想去上班， 一看这么大雨， 这要上路了不得堵死啊.  </p>

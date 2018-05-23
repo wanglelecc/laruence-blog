@@ -51,6 +51,14 @@
         @yield('content')
     </div>
 
+    <footer>
+        <div class="footer-bottom">
+            <p class="text-center">Copyright 2015 - 2018 LaraCMS All Rights Reserved</p>
+            <p class="text-center"><a href="http://www.miitbeian.gov.cn/" target="_blank">京ICP备15019058号-1</a></p>
+        </div>
+
+    </footer>
+
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
 </body>

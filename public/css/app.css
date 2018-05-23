@@ -27,3 +27,7 @@
 .bs-callout-danger {
     border-left-color: #ce4844;
 }
+
+.text-normal{
+    word-wrap:break-word; word-break:normal;
+}
