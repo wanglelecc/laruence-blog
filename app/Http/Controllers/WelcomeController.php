@@ -70,10 +70,6 @@ class WelcomeController extends Controller
         $data = [
             'nav_id' => 'licence',
             'source' => 'http://www.laruence.com/licence',
-//            'tags' => [
-//                'PHP语言',
-//                'PHP扩展',
-//            ],
             'content' => '<p>本博客属个人所有，不涉及商业目的。遵守中华人民共和国法律法规、中华民族基本道德和基本网络道德规范，尊重有节制的言论自由和意识形态自由，反对激进、破坏、低俗、广告、投机等不负责任的言行。所有转载的文撰写页面章、图片仅用于说明性目的，被要求或认为适当时，将标注署名与来源。避免转载有明确“不予转载”声明的作品。若不愿某一作品被转用，请及时通知本人。对于无版权或自由版权作品，本博客有权进行修改和传播，一旦涉及实质性修改，本博客将对修改后的作品享有相当的版权。二次转载者请再次确认原作者所给予的权力范围。<br />
 本博客所有原创作品，包括文字、资料、图片、网页格式，转载时请标注作者与来源。非经允许，不得用于赢利目的。本博客受中国知识产权、互联网法规和知识共享条例保护和保障，任何人不得进行旨在破坏或牟取私利的行为。本博客声明以简体中文版为准，不对其他语言版本负责。</p>
 <br /><p class="text-center"><img src="http://creativecommons.org/images/public/somerights20.png" border="0" alt="Creative Commons License" /> <br /> 本博客的所有原创作品采用<a rel="license" href="http://cn.creativecommons.org/">“知识共享”</a><a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/2.5/">署名-非商业性使用-相同方式共享2.5协议</a>进行许可</p><br />
@@ -91,6 +87,7 @@ The Boke is own by person, without commercial purposes. It compliances with the 
         $data = array_merge($data, $lists);
 
         $paginator = new LengthAwarePaginator(array_pad([0],$data['maxPage'],0), $data['maxPage'],1, null, [ 'path' => Paginator::resolveCurrentPath()] );
+        $uri = $uri == '/' ? 'home' : $uri;
 
         return view('lists', compact(['uri', 'data','title','paginator']));
     }
@@ -106,54 +103,6 @@ The Boke is own by person, without commercial purposes. It compliances with the 
         $title = $data['title'];
 
         return view('show',  compact(['data','title']));
-    }
-
-    public function test(){
-
-        $url = 'http://www.laruence.com/2016/12/18/3137.html';
-
-        echo str_replace('/','-',substr(strstr($url,'www.laruence.com'),17));
-
-        exit;
-
-//        $fileContents = file_get_contents('http://www.laruence.com/');
-//        Storage::put('test/index.html', $fileContents);
-        $fileContents = Storage::get('test/index.html');
-        $fileContents = strstr($fileContents,"<div class='content span-16'>");
-        $fileContents = strstr($fileContents,'<div class="navigation">', true);
-
-        $listContent = strstr($fileContents,'<div class="pagebar">', true);
-
-
-        $listArray = explode( 'Comments</a>', $listContent);
-        $listArray = array_slice($listArray,0, 10);
-
-        $preg = "//";
-        preg_match_all($preg,$listArray[0],$match);
-        $tagsContent = strstr($listArray[0],'<div class="postmeta">');
-        preg_match_all("/<a.*?>(.*?)<\/a>/is",$tagsContent,$match2);
-
-        echo $tagsContent;
-
-//        preg_match_all("/<div\s*class=\"excerpt\">[\s]*(.*?)[\s]*<\/div>/is",$listArray[0],$match);
-
-        var_dump($match);
-        var_dump($match2);
-
-        echo $listArray[0];
-
-//        echo $listContent;
-
-        exit;
-        $pageContent = strstr($fileContents,'<div class="pagebar">');
-        preg_match_all("/>(\d*?)</is",$pageContent,$match);
-        $maxPage = array_filter($match[1],function($var){ return intval($var) > 0; });
-        $maxPage = (int)array_pop($maxPage);
-        var_dump($maxPage);
-
-        $paginator = new LengthAwarePaginator(array_pad([0],$maxPage,0), $maxPage,1, null,  Paginator::resolveCurrentPath());
-
-        echo $paginator->links();
     }
 
 }
