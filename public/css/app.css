@@ -31,3 +31,5 @@
 .text-normal{
     word-wrap:break-word; word-break:normal;
 }
+
+.article img{ max-width:100% !important; }

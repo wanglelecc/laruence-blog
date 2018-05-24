@@ -3,6 +3,10 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+
 
 class WelcomeController extends Controller
 {
@@ -10,37 +14,61 @@ class WelcomeController extends Controller
     public function index()
     {
         $uri = '/';
-        return $this->lists([], '首页');
+
+        $data = [
+            'nav_id' => 'home',
+        ];
+
+        return $this->lists($uri, $data, '首页');
     }
 
     public function phpInternal()
     {
         $uri = 'php-internal';
 
-        return $this->lists([], 'PHP源码');
+        $data = [
+            'nav_id' => $uri,
+        ];
+        return $this->lists($uri, $data, 'PHP源码');
     }
 
     public function php()
     {
         $uri = 'php';
-        return $this->lists([], 'PHP应用');
+
+        $data = [
+            'nav_id' => $uri,
+        ];
+
+        return $this->lists($uri, $data, 'PHP应用');
     }
 
     public function jscss()
     {
         $uri = 'jscss';
-        return $this->lists([], 'JS/CSS');
+
+        $data = [
+            'nav_id' => $uri,
+        ];
+
+        return $this->lists($uri, $data, 'JS/CSS');
     }
 
     public function notes()
     {
         $uri = 'notes';
-        return $this->lists([], '随笔');
+
+        $data = [
+            'nav_id' => $uri,
+        ];
+
+        return $this->lists($uri, $data, '随笔');
     }
 
     public function licence()
     {
         $data = [
+            'nav_id' => 'licence',
             'source' => 'http://www.laruence.com/licence',
 //            'tags' => [
 //                'PHP语言',
@@ -57,13 +85,75 @@ The Boke is own by person, without commercial purposes. It compliances with the 
         return view('show', compact(['data','title']) );
     }
 
-    public function lists($data, $title = '')
+    public function lists($uri, $data, $title = '')
     {
-        return view('lists', compact(['data','title']));
+        $lists = crawl_lists($uri);
+        $data = array_merge($data, $lists);
+
+        $paginator = new LengthAwarePaginator(array_pad([0],$data['maxPage'],0), $data['maxPage'],1, null, [ 'path' => Paginator::resolveCurrentPath()] );
+
+        return view('lists', compact(['uri', 'data','title','paginator']));
     }
 
-    public function show(){
-        return view('show');
+    public function show($path){
+
+        $uri = laruence_url_decode($path);
+
+        $data = crawl_show($uri);
+
+        $data['nav_id'] = \request('nav','home');
+        $data['source'] = 'http://www.laruence.com/'.$uri;
+        $title = $data['title'];
+
+        return view('show',  compact(['data','title']));
+    }
+
+    public function test(){
+
+        $url = 'http://www.laruence.com/2016/12/18/3137.html';
+
+        echo str_replace('/','-',substr(strstr($url,'www.laruence.com'),17));
+
+        exit;
+
+//        $fileContents = file_get_contents('http://www.laruence.com/');
+//        Storage::put('test/index.html', $fileContents);
+        $fileContents = Storage::get('test/index.html');
+        $fileContents = strstr($fileContents,"<div class='content span-16'>");
+        $fileContents = strstr($fileContents,'<div class="navigation">', true);
+
+        $listContent = strstr($fileContents,'<div class="pagebar">', true);
+
+
+        $listArray = explode( 'Comments</a>', $listContent);
+        $listArray = array_slice($listArray,0, 10);
+
+        $preg = "//";
+        preg_match_all($preg,$listArray[0],$match);
+        $tagsContent = strstr($listArray[0],'<div class="postmeta">');
+        preg_match_all("/<a.*?>(.*?)<\/a>/is",$tagsContent,$match2);
+
+        echo $tagsContent;
+
+//        preg_match_all("/<div\s*class=\"excerpt\">[\s]*(.*?)[\s]*<\/div>/is",$listArray[0],$match);
+
+        var_dump($match);
+        var_dump($match2);
+
+        echo $listArray[0];
+
+//        echo $listContent;
+
+        exit;
+        $pageContent = strstr($fileContents,'<div class="pagebar">');
+        preg_match_all("/>(\d*?)</is",$pageContent,$match);
+        $maxPage = array_filter($match[1],function($var){ return intval($var) > 0; });
+        $maxPage = (int)array_pop($maxPage);
+        var_dump($maxPage);
+
+        $paginator = new LengthAwarePaginator(array_pad([0],$maxPage,0), $maxPage,1, null,  Paginator::resolveCurrentPath());
+
+        echo $paginator->links();
     }
 
 }

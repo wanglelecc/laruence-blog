@@ -35,12 +35,12 @@
                 <div class="collapse navbar-collapse" id="app-navbar-collapse">
                     <!-- Left Side Of Navbar -->
                     <ul class="nav navbar-nav">
-                        <li class="active"><a href="{{route('index')}}">首页</a></li>
-                        <li><a href="{{route('phpInternal')}}">PHP源码分析</a></li>
-                        <li><a href="{{route('php')}}">PHP应用</a></li>
-                        <li><a href="{{route('jscss')}}">JS/CSS</a></li>
-                        <li><a href="{{route('notes')}}">随笔</a></li>
-                        <li><a href="{{route('licence')}}">博客声明</a></li>
+                        <li id="nav-home" _class="active"><a href="{{route('index')}}">首页</a></li>
+                        <li id="nav-php-internal"><a href="{{route('phpInternal')}}">PHP源码分析</a></li>
+                        <li id="nav-php"><a href="{{route('php')}}">PHP应用</a></li>
+                        <li id="nav-jscss"><a href="{{route('jscss')}}">JS/CSS</a></li>
+                        <li id="nav-notes"><a href="{{route('notes')}}">随笔</a></li>
+                        <li id="nav-licence"><a href="{{route('licence')}}">博客声明</a></li>
                     </ul>
                     <!-- Right Side Of Navbar -->
                 </div>
@@ -60,5 +60,6 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}"></script>
+    @yield('scripts')
 </body>
 </html>

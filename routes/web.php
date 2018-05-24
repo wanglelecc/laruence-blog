@@ -17,7 +17,9 @@ Route::get('php', 'WelcomeController@php')->name('php');
 Route::get('jscss', 'WelcomeController@jscss')->name('jscss');
 Route::get('notes', 'WelcomeController@notes')->name('notes');
 Route::get('licence', 'WelcomeController@licence')->name('licence');
+Route::get('show/{path}', 'WelcomeController@show')->name('show');
+
 
 Route::get('lists', 'WelcomeController@lists');
-Route::get('show', 'WelcomeController@show');
+Route::get('test', 'WelcomeController@test');
 

@@ -11,6 +11,111 @@ function route_class()
     return str_replace('.', '-', Route::currentRouteName());
 }
 
+
+function laruence_url_encode($url){
+    return str_replace('/','-',substr(strstr($url,'www.laruence.com'),17));
+}
+
+function laruence_url_decode($url){
+    return str_replace('-','/', $url);
+}
+
+function crawl_show($uri){
+
+    $key = 'show_'.route_class();
+    $cacheData = \Cache::get($key);
+    if($cacheData){
+        return $cacheData;
+    }
+
+    // 获取内容
+    $contents = crawl_laruence_content($uri);
+
+    $titlePattern = "/<title\>(.*?)<\/title>/is";
+    preg_match($titlePattern,$contents,$titleMatch);
+    $title = trim(strstr($titleMatch[1],'|', true));
+
+    $contents = strstr($contents,"<div class='content span-16'>");
+    $contents = strstr($contents,'<div style=\'float:left\'>', true);
+    $contents = substr(strstr($contents,'</ul></div>'), 11);
+
+    // 缓存抓取 60分钟过期。
+    $expiredAt = now()->addMinutes(60);
+    \Cache::put($key, [ 'title' => $title, 'content' => $contents, ], $expiredAt);
+
+    return [ 'title' => $title, 'content' => $contents, ];
+
+}
+
+function crawl_lists($uri){
+    // 检查是否有缓存
+    $key = 'list_'.route_class().'_page_'. \Illuminate\Pagination\Paginator::resolveCurrentPage();
+
+    $cacheData = \Cache::get($key);
+    if($cacheData){
+        return $cacheData;
+    }
+
+    // 获取内容
+    $contents = crawl_laruence_content($uri);
+    $contents = strstr($contents,"<div class='content span-16'>");
+    $contents = strstr($contents,'<div class="navigation">', true);
+
+    # 列表内容
+    $listContent = strstr($contents,'<div class="pagebar">', true);
+
+    # 分页内容
+    $pageContent = strstr($contents,'<div class="pagebar">');
+
+    # 分割文章列表
+    $listArray = explode( 'Comments</a>', $listContent);
+    $listArray = array_slice($listArray,0, 10);
+
+    $items = [];
+    $listPattern = "/<h1\>(.*?)<a(.*?)href=\"(.*?)\"(.*?)>(.*?)<\/a>(.*?)<\/h1>[\s\D]*<div\s*class=\"excerpt\">[\s]*(.*?)[\s]*<\/div>/is";
+    $tagPattern = "/<a.*?>(.*?)<\/a>/is";
+    foreach($listArray as $item){
+        preg_match_all($listPattern,$item,$listMatch);
+
+        $tagsContent = strstr($item,'<div class="postmeta">');
+        preg_match_all($tagPattern,$tagsContent,$tagMatch);
+
+        $items[] = [
+            'title' => $listMatch[5][0],
+            'source' =>  $listMatch[3][0],
+            'url' => laruence_url_encode($listMatch[3][0]),
+            'description' => $listMatch[7][0],
+            'tags' => $tagMatch[1],
+        ];
+    }
+
+    # 获取最大分页数量
+    preg_match_all("/>(\d*?)</is",$pageContent,$match);
+    $maxPage = array_filter($match[1],function($var){ return intval($var) > 0; });
+    $maxPage = (int)array_pop($maxPage);
+
+
+    // 缓存抓取 60分钟过期。
+    $expiredAt = now()->addMinutes(60);
+    \Cache::put($key, [ 'items' => $items, 'maxPage' => $maxPage, ], $expiredAt);
+
+    return [
+        'items' => $items,
+        'maxPage' => $maxPage,
+    ];
+}
+
+/**
+ * 抓取内容
+ *
+ * @param $uri
+ * @return bool|string
+ */
+function crawl_laruence_content($uri){
+    $url = 'http://www.laruence.com/' . $uri;
+    return  file_get_contents($url);
+}
+
 /**
  * 后台url生成函数
  *

@@ -47,3 +47,10 @@
         </div>
     </div>
 @endsection
+
+
+@section('scripts')
+    <script>
+        $("#nav-{{$data['nav_id']}}").addClass('active');
+    </script>
+@endsection
